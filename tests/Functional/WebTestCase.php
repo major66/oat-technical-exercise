@@ -1,7 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Tests\Functional;
+namespace Oat\UserApi\Tests\Functional;
 
+use DI\ContainerBuilder;
+use PHPUnit\Framework\TestCase;
 use Slim\App;
 use Slim\Http\Environment;
 use Slim\Http\Request;
@@ -13,7 +15,7 @@ use Slim\Http\Response;
  * tuned to the specifics of this skeleton app, so if your needs are
  * different, you'll need to change it.
  */
-class BaseTestCase extends \PHPUnit_Framework_TestCase
+class WebTestCase extends TestCase
 {
     /**
      * Use middleware when running application?
@@ -29,6 +31,8 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
      * @param string $requestUri the request URI
      * @param array|object|null $requestData the request data
      * @return \Slim\Http\Response
+     * @throws \Slim\Exception\MethodNotAllowedException
+     * @throws \Slim\Exception\NotFoundException
      */
     public function runApp($requestMethod, $requestUri, $requestData = null)
     {
@@ -51,27 +55,26 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
         // Set up a response object
         $response = new Response();
 
-        // Use the application settings
-        $settings = require __DIR__ . '/../../src/settings.php';
-
         // Instantiate the application
-        $app = new App($settings);
-
-        // Set up dependencies
-        require __DIR__ . '/../../src/dependencies.php';
+        $app = new class() extends App {
+            protected function configureContainer(ContainerBuilder $builder): void
+            {
+                $builder->addDefinitions(
+                    __DIR__ . '/../../config/settings.php',
+                    __DIR__ . '/../../config/definitions.php'
+                );
+            }
+        };
 
         // Register middleware
         if ($this->withMiddleware) {
-            require __DIR__ . '/../../src/middleware.php';
+            require __DIR__ . '/../../config/middleware.php';
         }
 
         // Register routes
-        require __DIR__ . '/../../src/routes.php';
+        require __DIR__ . '/../../config/routes.php';
 
-        // Process the application
-        $response = $app->process($request, $response);
-
-        // Return the response
-        return $response;
+        // Process the application and return the response
+        return $app->process($request, $response);
     }
 }
