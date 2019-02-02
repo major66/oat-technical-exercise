@@ -1,0 +1,138 @@
+openapi: 3.0.1
+info:
+  version: v1
+  title: User API
+  description: Oat Technical excercise User API.
+servers:
+- url: 'http://localhost:8000/v1/'
+  description: Local User API
+paths:
+  '/users':
+    get:
+      summary: User list
+      description: User list.
+      operationId: ListUsersAction
+      parameters:
+      - in: query
+        name: name
+        description: User firstname/lastname contain given name.
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: offset
+        description: offset for pagination purpose.
+        required: false
+        schema:
+          type: integer
+          format: int32
+          example: 2
+          default: 0
+      - in: query
+        name: limit
+        description: limit for pagination purpose.
+        required: false
+        schema:
+          type: integer
+          format: int32
+          example: 50
+          default: 100
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersList"
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  '/users/{userId}':
+    get:
+      summary: User information by id.
+      description: User information by identifier.
+      operationId: GetUserAction
+      parameters:
+      - in: path
+        name: userId
+        description: User id (login).
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    UsersList:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
+    User:
+      type: object
+      properties:
+        login:
+          description: User login.
+          example: 'jamesB'
+          type: string
+        password:
+          description: User password.
+          example: 'password'
+          type: string
+        title:
+          description: User title.
+          example: 'mr'
+          type: string
+        lastname:
+          description: User lastname.
+          example: 'james'
+          type: string
+        firstname:
+          description: User firstname.
+          example: 'Bond'
+          type: string
+        gender:
+          description: User gender.
+          example: 'male'
+          type: string
+        email:
+          description: User email.
+          example: 'james.bond@mi6.com'
+          type: string
+        picture:
+          description: User picture URL.
+          example: 'https://example.com/jamesbond.jpg'
+          type: string
+        address:
+          description: User address.
+          example: 'Lambeth, Londres SE1 7TP, Royaume-Uni'
+          type: string
+    Error:
+      type: "object"
+      properties:
+        message:
+          type: "string"
+          description: "Documented error message"
+        code:
+          type: integer
+          nullable: true
+          example: "Documented error code"
