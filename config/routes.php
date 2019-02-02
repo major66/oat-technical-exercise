@@ -1,10 +1,10 @@
 <?php
 
-use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use Oat\UserApi\Action\User\GetUserAction;
+use Oat\UserApi\Action\User\GetUserListAction;
+use Slim\App;
 
-$app->get('/v1/users/{userId}', function (Request $request, Response $response): ResponseInterface {
-    $response = $response->withStatus(200);
-    return $response;
+$app->group('/v1/users', function (App $app) {
+    $app->get('', GetUserListAction::class);
+    $app->get('/{id}', GetUserAction::class);
 });

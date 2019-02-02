@@ -1,7 +1,7 @@
 <?php
 
+use DI\Bridge\Slim\App;
 use DI\ContainerBuilder;
-use Slim\App;
 
 if (PHP_SAPI == 'cli-server') {
     // To help the built-in PHP dev server, check if the request was actually for

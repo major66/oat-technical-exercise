@@ -11,15 +11,16 @@ class GetUserActionTest extends WebTestCase
         $existingUser = 'fosterabigail';
         $response = $this->runApp('GET', sprintf('/v1/users/%s', $existingUser));
 
-        $this->assertEquals(200, $response->getStatusCode());
-        //$this->assertEquals($this->getUserData(), (string)$response->getBody());
+        $this->assertStatusCode(200, $response);
+        $this->assertEquals($this->getUserData(), $this->getResponseBody($response));
     }
 
     public function testItWillReturn404IfGivenUserIsNotFound()
     {
-        //$response = $this->runApp('GET', '/v1/users/nonExistingUser');
+        $response = $this->runApp('GET', '/v1/users/nonExistingUser');
 
-        //$this->assertEquals(404, $response->getStatusCode());
+        $this->assertStatusCode(404, $response);
+        $this->assertEquals(['error' => 'User not found.'], $this->getResponseBody($response));
     }
 
     private function getUserData(): array

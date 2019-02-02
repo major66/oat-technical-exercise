@@ -2,9 +2,11 @@
 
 namespace Oat\UserApi\Tests\Functional;
 
+use DI\Bridge\Slim\App;
+use DI\Container;
 use DI\ContainerBuilder;
 use PHPUnit\Framework\TestCase;
-use Slim\App;
+use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Environment;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -17,12 +19,19 @@ use Slim\Http\Response;
  */
 class WebTestCase extends TestCase
 {
-    /**
-     * Use middleware when running application?
-     *
-     * @var bool
-     */
+    /** @var bool */
     protected $withMiddleware = true;
+
+    /** @var Container */
+    protected $container;
+
+    /**
+     * @inheritDoc
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+    }
 
     /**
      * Process the application given a request method and URI
@@ -76,5 +85,24 @@ class WebTestCase extends TestCase
 
         // Process the application and return the response
         return $app->process($request, $response);
+    }
+
+    public function assertStatusCode(
+        int $expectedStatusCode,
+        ResponseInterface $response,
+        string $message = "The response status code doesn't match."
+    ): void {
+        $message = $this->createMessageForBodyResponseAssertions($response, $message);
+        $this->assertEquals($expectedStatusCode, $response->getStatusCode(), $message);
+    }
+
+    public function getResponseBody(ResponseInterface $response): array
+    {
+        return json_decode((string)$response->getBody(), true);
+    }
+
+    private function createMessageForBodyResponseAssertions(ResponseInterface $response, string $message): string
+    {
+        return sprintf("%s\nBody content: %s", $message, (string)$response->getBody());
     }
 }
