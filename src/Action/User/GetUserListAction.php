@@ -29,7 +29,7 @@ class GetUserListAction
         $users = $this->repository->findBy(
             $parameters,
             isset($parameters['limit']) ? (int)$parameters['limit'] : 100,
-            isset($parameters['offset']) ? (int)$parameters['offset'] : 100
+            isset($parameters['offset']) ? (int)$parameters['offset'] : 0
         );
 
         return $this->responder->respond($response, $users);
