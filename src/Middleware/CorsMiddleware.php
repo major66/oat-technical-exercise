@@ -2,13 +2,12 @@
 
 namespace Oat\UserApi\Middleware;
 
-use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 class CorsMiddleware
 {
-    public function __invoke(Request $request, Response $response, callable $next): ResponseInterface
+    public function __invoke(Request $request, Response $response, callable $next)
     {
         /** @var Response $response */
         $response = $next($request, $response);

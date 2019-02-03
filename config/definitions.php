@@ -18,9 +18,9 @@ return [
 
     UserRepository::class => function (ContainerInterface $container): UserRepositoryInterface {
         $serializer = $container->get(Serializer::class);
-        $dataSource = $container->get('dataSource');
-        $dataSourceType = $dataSource['defaultType'];
-        $filePath = $dataSource['path'][sprintf('%s.path', $dataSourceType)];
+        $dataSourceType = $container->get('dataSource.defaultType');
+        $filePath = $container->get(sprintf('dataSource.%s.path', $dataSourceType));
+
         /** @var UserCollection $users */
         $users = $serializer->deserialize(file_get_contents($filePath), UserCollection::class, $dataSourceType);
 

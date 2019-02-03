@@ -67,6 +67,7 @@ class UserRepository implements UserRepositoryInterface
                 break;
             }
         }
+
         return [
             'limit' => $limit,
             'offset' => $offset,
